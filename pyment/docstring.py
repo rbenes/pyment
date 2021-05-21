@@ -1746,19 +1746,24 @@ class DocString(object):
             with_space = lambda s: '\n'.join([self.docs['out']['spaces'] +\
                                                     l.lstrip() if i > 0 else\
                                                     l for i, l in enumerate(s.splitlines())])
-            raw += self.dst.googledoc.get_key_section_header('param', self.docs['out']['spaces'])
+            out = ""
             for p in self.docs['out']['params']:
-                raw += self.docs['out']['spaces'] + spaces + p[0]
+                out += self.docs['out']['spaces'] + spaces + p[0]
                 if p[2] is not None and len(p[2]) > 0:
-                    raw += '(' + p[2]
+                    out += '(' + p[2]
                     if len(p) > 3 and p[3] is not None:
-                        raw += ', optional'
-                    raw += ')'
-                raw += ': ' + with_space(p[1]).strip()
+                        out += ', optional'
+                    out += ')'
+                out += ': ' + with_space(p[1]).strip()
                 if len(p) > 2:
                     if 'default' not in p[1].lower() and len(p) > 3 and p[3] is not None:
-                        raw += ' (Default value = ' + str(p[3]) + ')'
-                raw += '\n'
+                        out += ' (Default value = ' + str(p[3]) + ')'
+                out += '\n'
+
+            if len(out.strip()) > 0:
+                raw += self.dst.googledoc.get_key_section_header('param', self.docs['out']['spaces'])
+                raw += out
+
         elif self.dst.style['out'] == 'groups':
             pass
         else:
@@ -1777,7 +1782,10 @@ class DocString(object):
                         raw += '\n'
                         raw += self.docs['out']['spaces'] + self.dst.get_key('type', 'out') + ' ' + p[0] + sep
                     raw += '\n'
-        return raw
+        if len(raw.strip()) > 0:
+            return raw
+        else:
+            return ""
 
     def _set_raw_raise(self, sep):
         """Set the output raw exception section
@@ -1808,16 +1816,21 @@ class DocString(object):
                     with_space = lambda s: '\n'.join([self.docs['out']['spaces'] + spaces + \
                                                             l.lstrip() if i > 0 else \
                                                             l for i, l in enumerate(s.splitlines())])
-                    raw += self.dst.googledoc.get_key_section_header('raise', self.docs['out']['spaces'])
+
+                    out = ""
                     if len(self.docs['out']['raises']):
                         for p in self.docs['out']['raises']:
                             raw += self.docs['out']['spaces'] + spaces
                             if p[0] is not None:
-                                raw += p[0] + sep
+                                out += p[0] + sep
                             if p[1]:
-                                raw += p[1].strip()
-                            raw += '\n'
-                    raw += '\n'
+                                out += p[1].strip()
+                            out += '\n'
+
+                    if len(out.strip()) > 0:
+                        raw += self.dst.googledoc.get_key_section_header('raise', self.docs['out']['spaces'])
+                        raw += out
+                        raw += '\n'
         elif self.dst.style['out'] == 'groups':
             pass
         else:
@@ -1833,7 +1846,11 @@ class DocString(object):
                         raw += with_space(p[1]).strip()
                     raw += '\n'
             raw += '\n'
-        return raw
+
+        if len(raw.strip()) > 0:
+            return raw
+        else:
+            return ""
 
     def _set_raw_return(self, sep):
         """Set the output raw return section
@@ -1876,7 +1893,9 @@ class DocString(object):
             with_space = lambda s: '\n'.join([self.docs['out']['spaces'] + spaces +\
                                                     l.lstrip() if i > 0 else\
                                                     l for i, l in enumerate(s.splitlines())])
-            raw += self.dst.googledoc.get_key_section_header('return', self.docs['out']['spaces'])
+
+
+            out = ""
             if self.docs['out']['rtype']:
                 rtype = self.docs['out']['rtype']
             else:
@@ -1889,22 +1908,28 @@ class DocString(object):
                         rtype = ret_elem[2]
                         if rtype is None:
                             rtype = ''
-                        raw += self.docs['out']['spaces'] + spaces
-                        raw += rtype + ': ' + with_space(ret_elem[1]).strip() + '\n'
+                        out += self.docs['out']['spaces'] + spaces
+                        out += rtype + ': ' + with_space(ret_elem[1]).strip() + '\n'
                     else:
                         # There can be a problem
                         if rtype:
-                            raw += self.docs['out']['spaces'] + spaces + rtype + ': '
-                            raw += with_space(str(ret_elem)).strip() + '\n'
+                            out += self.docs['out']['spaces'] + spaces + rtype + ': '
+                            out += with_space(str(ret_elem)).strip() + '\n'
                         else:
-                            raw += self.docs['out']['spaces'] + spaces + with_space(str(ret_elem)).strip() + '\n'
+                            out += self.docs['out']['spaces'] + spaces + with_space(str(ret_elem)).strip() + '\n'
             # case of a unique return
             elif self.docs['out']['return'] is not None:
                 if rtype:
-                    raw += self.docs['out']['spaces'] + spaces + rtype + ': '
-                    raw += with_space(self.docs['out']['return']).strip() + '\n'
+                    out += self.docs['out']['spaces'] + spaces + rtype + ': '
+                    out += with_space(self.docs['out']['return']).strip() + '\n'
                 else:
-                    raw += self.docs['out']['spaces'] + spaces + with_space(self.docs['out']['return']).strip() + '\n'
+                    out += self.docs['out']['spaces'] + spaces + with_space(self.docs['out']['return']).strip() + '\n'
+
+            if len(out.strip()) > 0:
+                raw += "\n"
+                raw += self.dst.googledoc.get_key_section_header('return', self.docs['out']['spaces'])
+                raw += out
+
         elif self.dst.style['out'] == 'groups':
             pass
         else:
@@ -1917,7 +1942,11 @@ class DocString(object):
                 if not self.docs['out']['params']:
                     raw += '\n'
                 raw += self.docs['out']['spaces'] + self.dst.get_key('rtype', 'out') + sep + self.docs['out']['rtype'].rstrip() + '\n'
-        return raw
+
+        if len(raw.strip()) > 0:
+            return raw
+        else:
+            return ""
 
     def _set_raw(self):
         """Sets the output raw docstring"""
