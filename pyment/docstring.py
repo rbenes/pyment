@@ -1742,7 +1742,7 @@ class DocString(object):
                         raw += ' (Default value = ' + str(p[3]) + ')'
                 raw += '\n'
         elif self.dst.style['out'] == 'google':
-            spaces = ' ' * 2
+            spaces = ' ' * 4
             with_space = lambda s: '\n'.join([self.docs['out']['spaces'] +\
                                                     l.lstrip() if i > 0 else\
                                                     l for i, l in enumerate(s.splitlines())])
@@ -1804,7 +1804,7 @@ class DocString(object):
                 raw += '\n'
                 if 'raise' in self.dst.googledoc.get_mandatory_sections() or \
                         (self.docs['out']['raises'] and 'raise' in self.dst.googledoc.get_optional_sections()):
-                    spaces = ' ' * 2
+                    spaces = ' ' * 4
                     with_space = lambda s: '\n'.join([self.docs['out']['spaces'] + spaces + \
                                                             l.lstrip() if i > 0 else \
                                                             l for i, l in enumerate(s.splitlines())])
@@ -1872,8 +1872,7 @@ class DocString(object):
                 raw += self.docs['out']['spaces'] + rtype
                 raw += '\n' + self.docs['out']['spaces'] + spaces + with_space(self.docs['out']['return']).strip() + '\n'
         elif self.dst.style['out'] == 'google':
-            raw += '\n'
-            spaces = ' ' * 2
+            spaces = ' ' * 4
             with_space = lambda s: '\n'.join([self.docs['out']['spaces'] + spaces +\
                                                     l.lstrip() if i > 0 else\
                                                     l for i, l in enumerate(s.splitlines())])
